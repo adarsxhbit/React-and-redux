@@ -1,27 +1,26 @@
-import faker from 'faker';
 import React from 'react'
 import ReactDOM from 'react-dom'
-import CommentDetail  from './CommentDetail';
-import ApprovalCard from './ApprovalCard';
-import './style/App.css'
+import SeasonDisplay from './SeasonDisplay'
 
-const App = () => {
-    return (
-        <div className='ui container comments'>
-            <ApprovalCard>
-                <CommentDetail author = "Adarsh" time="05:45AM"  comment="Nice Website" photo={faker.image.image()}/>            
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author = "Sagar" time="06:45AM"  comment="Helping" photo={faker.image.image()}/> 
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author = "Raj" time="07:45AM"  comment="Loved it" photo={faker.image.image()}/> 
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author = "Nirmal" time="08:45AM"  comment="Nice Blog" photo={faker.image.image()}/>    
-            </ApprovalCard>
-        </div>
-    );
+class App extends React.Component {
+    state = {lat: null, errorMsg: ""}
+
+    componentDidMount() {
+        window.navigator.geolocation.getCurrentPosition(
+            (pos)=> this.setState({lat: pos.coords.latitude}),
+            (err) => this.setState({errorMsg:err.message})
+        )
+    }
+
+    render(){
+        if(!this.state.lat && this.state.errorMsg){
+            return <div>Error: {this.state.errorMsg}</div>
+        }
+        if(this.state.lat && !this.state.errorMsg){
+            return <SeasonDisplay lat = {this.state.lat} />
+        }
+        return <div>Loading...</div>
+    }
 }
 
 ReactDOM.render(
